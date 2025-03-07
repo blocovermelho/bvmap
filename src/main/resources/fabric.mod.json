@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "bvmap",
+  "version": "${version}",
+  "name": "bvmap",
+  "description": "Experimental Worldmap Mod",
+  "authors": [],
+  "contact": {},
+  "license": "Apache-2.0",
+  "icon": "assets/bvmap/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "org.blocovermelho.bvmap.client.MapModClient"
+    ],
+    "main": [
+      "org.blocovermelho.bvmap.MapMod"
+    ]
+  },
+  "mixins": [
+    "bvmap.mixins.json",
+    {
+      "config": "bvmap.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
