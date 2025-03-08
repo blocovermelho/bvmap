@@ -1,5 +1,7 @@
 package org.blocovermelho.bvmap.client.screen;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
@@ -11,6 +13,8 @@ import net.minecraft.text.Text;
  * The importance of this is to get things going and documented
  * and for us to not copy code without understanding what it does.
  */
+
+@Environment(EnvType.CLIENT)
 public class ScrappyFiddleScreen extends Screen {
     private final Screen parent;
 
