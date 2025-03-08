@@ -12,7 +12,15 @@ import net.minecraft.text.Text;
  * and for us to not copy code without understanding what it does.
  */
 public class ScrappyFiddleScreen extends Screen {
-    protected ScrappyFiddleScreen(Text title) {
-        super(title);
+    private final Screen parent;
+
+    protected ScrappyFiddleScreen(Screen parent) {
+        super(Text.literal("BVMap - Dev Pre-Alpha"));
+        this.parent = parent;
+    }
+
+    @Override
+    public void close() {
+        client.setScreen(parent);
     }
 }
