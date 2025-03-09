@@ -24,6 +24,12 @@ public class ScrappyFiddleScreen extends Screen {
     }
 
     @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+        context.drawText(textRenderer, Text.of("Hello World"), mouseX + 8 , mouseY, 0xffffffff, true);
+    }
+
+    @Override
     public void close() {
         client.setScreen(parent);
     }
