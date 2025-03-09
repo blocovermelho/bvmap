@@ -20,7 +20,7 @@ import org.blocovermelho.bvmap.MapMod;
 public class ScrappyFiddleScreen extends Screen {
     private final Screen parent;
 
-    protected ScrappyFiddleScreen(Screen parent) {
+    public ScrappyFiddleScreen(Screen parent) {
         super(Text.literal("BVMap - Dev Pre-Alpha"));
         MapMod.LOGGER.info("ScrappyFiddleScreen Created");
         this.parent = parent;
