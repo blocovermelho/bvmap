@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MapMod implements ModInitializer {
-    public static final String ID = "bvmod";
+    public static final String ID = "bvmap";
     public static Logger LOGGER = LoggerFactory.getLogger(ID);
 
     @Override
