@@ -1,5 +1,6 @@
 package org.blocovermelho.bvmap.client;
 
+import folk.sisby.surveyor.WorldSummary;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 
@@ -8,5 +9,8 @@ public class MapModClient implements ClientModInitializer {
     public void onInitializeClient() {
         ClientTickEvents.END_CLIENT_TICK.register(new Keybind());
         Keybind.register();
+
+        WorldSummary.enableTerrain();
+        WorldSummary.enableLandmarks();
     }
 }
