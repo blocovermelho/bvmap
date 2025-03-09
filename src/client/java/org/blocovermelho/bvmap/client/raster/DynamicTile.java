@@ -12,13 +12,15 @@ import org.blocovermelho.bvmap.MapMod;
  * Represents a rasterized tile of a minecraft region
  */
 public class DynamicTile implements AutoCloseable {
-    // Splash Color: 458 With 50% opacity
     // Note: Colors usually are RGBA, but this is little-endian because of Java.
     // So we have to flip the bits around to be ABGR.
+    // See Also: https://www.todepond.com/lab/splash/
+
+    // Splash Color: 458 With 50% opacity
     public static int COLOR_UNLOADED = 0x7fe28d71;
     // Splash Color: 932 with 100% opacity;
     public static int COLOR_ERROR = 0xff3855ff;
-    // Splash Color: 212
+    // Splash Color: 212 With 50% opacity
     public static int COLOR_EMPTY = 0x7f381c38;
 
     private static int WIDTH = 512;
