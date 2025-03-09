@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import org.blocovermelho.bvmap.MapMod;
 
 /**
  * This is no place of honor
@@ -20,6 +21,7 @@ public class ScrappyFiddleScreen extends Screen {
 
     protected ScrappyFiddleScreen(Screen parent) {
         super(Text.literal("BVMap - Dev Pre-Alpha"));
+        MapMod.LOGGER.info("ScrappyFiddleScreen Created");
         this.parent = parent;
     }
 
