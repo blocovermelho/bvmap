@@ -1,5 +1,7 @@
 package org.blocovermelho.bvmap.client.screen;
 
+import com.google.common.base.Stopwatch;
+import com.mojang.blaze3d.systems.RenderSystem;
 import folk.sisby.surveyor.WorldSummary;
 import folk.sisby.surveyor.terrain.RegionSummary;
 import net.fabricmc.api.EnvType;
@@ -28,6 +30,10 @@ public class ScrappyFiddleScreen extends Screen {
     private final Screen parent;
 
     DynamicTile tile = null;
+    long lastMillis = -1;
+
+    int originX = 10;
+    int originY = 10;
 
     public ScrappyFiddleScreen(Screen parent) {
         super(Text.literal("BVMap - Dev Pre-Alpha"));
@@ -55,8 +61,10 @@ public class ScrappyFiddleScreen extends Screen {
 
                     World world = player.getWorld();
                     WorldSummary worldSummary = WorldSummary.of(world);
-
+                    Stopwatch stopwatch = Stopwatch.createStarted();
                     this.tile = AlbedoRasterizer.transformRegion(regionPos, worldSummary, world.getHeight());
+                    stopwatch.stop();
+                    this.lastMillis = stopwatch.elapsed().toMillis();
                 }
             }
         }
@@ -66,7 +74,7 @@ public class ScrappyFiddleScreen extends Screen {
             context.drawTexture(this.tile.getResourceKey(), 10, 10, 0,0, 512, 512, 512, 512);
         }
 
-        context.drawText(textRenderer, Text.of("Hello World"), mouseX + 8 , mouseY, 0xffffffff, true);
+        context.drawText(textRenderer, Text.of("Rasterized 1 region in " + lastMillis + " ms"), mouseX + 8 , mouseY, 0xffffffff, true);
     }
 
     @Override
