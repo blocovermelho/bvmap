@@ -42,6 +42,12 @@ public class ScrappyFiddleScreen extends Screen {
     }
 
     @Override
+    protected void init() {
+        this.originX = width / 2;
+        this.originY = height / 2;
+    }
+
+    @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
@@ -70,8 +76,20 @@ public class ScrappyFiddleScreen extends Screen {
         }
 
         if (this.tile != null) {
-            // Shamefully I copied this line without knowing what it did. This might get us later.
-            context.drawTexture(this.tile.getResourceKey(), 10, 10, 0,0, 512, 512, 512, 512);
+            // X, Y: Top Left Coordinates
+            // Width, Height: Size of Screen
+            // U, V: Top Left Texture Coordinates
+            // Region {Width, Height}: Size of the Region to be fetched
+            // Texture {Width, Height}: Real Texture Size
+            RenderSystem.enableBlend();
+            context.drawTexture(this.tile.getResourceKey(),
+                    originX - 256, originY - 256,
+                    512, 512,
+                    0, 0,
+                    512, 512,
+                    512, 512
+            );
+            RenderSystem.disableBlend();
         }
 
         context.drawText(textRenderer, Text.of("Rasterized 1 region in " + lastMillis + " ms"), mouseX + 8 , mouseY, 0xffffffff, true);
