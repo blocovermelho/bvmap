@@ -69,6 +69,10 @@ public class DynamicTile implements AutoCloseable {
         return resourceKey;
     }
 
+    public ChunkPos getRegionPos() {
+        return regionPos;
+    }
+
     @Override
     public void close() throws Exception {
         MinecraftClient.getInstance().getTextureManager().destroyTexture(this.resourceKey);
