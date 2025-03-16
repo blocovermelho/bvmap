@@ -91,7 +91,6 @@ public class ScrappyFiddleScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
-        // TODO: Fix Transparency. It works only for the last tile that was rendered.
         RenderSystem.enableBlend();
 
         tiles.forEach((k, v) -> {
@@ -147,8 +146,8 @@ public class ScrappyFiddleScreen extends Screen {
         int rw_z = world.z - this.aw_Origin.z;
 
         // Relative Block / (Relative Block / Relative Pixel) = Relative Pixel
-        int rs_scaledx = (int) (rw_x / this.blocksPerPixel);
-        int rs_scaledz = (int) (rw_z / this.blocksPerPixel);
+        int rs_scaledx = Math.round(rw_x / this.blocksPerPixel);
+        int rs_scaledz = Math.round(rw_z / this.blocksPerPixel);
 
         // Moving towards the center of screen
         int screen_x = this.as_CenterPixel.x + rs_scaledx;
