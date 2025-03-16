@@ -41,7 +41,7 @@ public class ScrappyFiddleScreen extends Screen {
 
     // Scaling
     /// relative blocks / relative pixels
-    private double blocksPerPixel = 1;
+    private float blocksPerPixel = 1;
 
     /// Absolute Screen-Space Coordinate
     ChunkPos as_CenterPixel = ChunkPos.ORIGIN;
