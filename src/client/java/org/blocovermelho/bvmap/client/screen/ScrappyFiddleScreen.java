@@ -15,6 +15,7 @@ import org.blocovermelho.bvmap.MapMod;
 import org.blocovermelho.bvmap.client.MapModClient;
 import org.blocovermelho.bvmap.client.raster.AlbedoRasterizer;
 import org.blocovermelho.bvmap.client.raster.DynamicTile;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 
@@ -85,6 +86,26 @@ public class ScrappyFiddleScreen extends Screen {
                 tiles.put(region, raster);
             }
         }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // Most dumb thing. Just set the center coordinates to be the clicked block and recenter or right mouse button
+        ChunkPos new_pos = screenToWorld(new ChunkPos((int) Math.round(mouseX), (int) Math.round(mouseY)));
+
+        if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
+            this.aw_Origin = new_pos;
+        }
+
+        if (button == GLFW.GLFW_MOUSE_BUTTON_2) {
+            if (client != null && client.player != null) {
+                this.aw_Origin = new ChunkPos(client.player.getBlockX(), client.player.getBlockZ());
+            } else {
+                this.aw_Origin = ChunkPos.ORIGIN;
+            }
+        }
+
+        return true;
     }
 
     @Override
