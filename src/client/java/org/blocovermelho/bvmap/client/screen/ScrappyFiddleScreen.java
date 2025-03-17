@@ -88,23 +88,19 @@ public class ScrappyFiddleScreen extends Screen {
         }
     }
 
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        int b_deltaX = (int) Math.round(this.blocksPerPixel * deltaX);
+        int b_deltaY = (int) Math.round(this.blocksPerPixel * deltaY);
+
+        this.aw_Origin = new ChunkPos(this.aw_Origin.x - b_deltaX, this.aw_Origin.z - b_deltaY);
+
+        return true;
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        // Most dumb thing. Just set the center coordinates to be the clicked block and recenter or right mouse button
-        ChunkPos new_pos = screenToWorld(new ChunkPos((int) Math.round(mouseX), (int) Math.round(mouseY)));
-
-        if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
-            this.aw_Origin = new_pos;
-        }
-
-        if (button == GLFW.GLFW_MOUSE_BUTTON_2) {
-            if (client != null && client.player != null) {
-                this.aw_Origin = new ChunkPos(client.player.getBlockX(), client.player.getBlockZ());
-            } else {
-                this.aw_Origin = ChunkPos.ORIGIN;
-            }
-        }
-
         return true;
     }
 
