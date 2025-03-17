@@ -39,6 +39,7 @@ public class ScrappyFiddleScreen extends Screen {
 
     // Constants
     public static final int NATIVE_IMAGE_SIZE = 512;
+    public static final float SCROLL_PER_TICK = 1.125f;
 
     // Scaling
     /// relative blocks / relative pixels
@@ -59,8 +60,6 @@ public class ScrappyFiddleScreen extends Screen {
     @Override
     protected void init() {
         this.as_CenterPixel = new ChunkPos(width / 2 , height / 2);
-
-        this.blocksPerPixel = 16;
 
         if (client != null && client.player != null) {
             ChunkPos chunkPos = client.player.getChunkPos();
@@ -88,6 +87,13 @@ public class ScrappyFiddleScreen extends Screen {
         }
     }
 
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        double scrolls = Math.pow(SCROLL_PER_TICK, -verticalAmount);
+        double newScale = this.blocksPerPixel * scrolls;
+        this.blocksPerPixel = (float) NATIVE_IMAGE_SIZE / Math.round(NATIVE_IMAGE_SIZE / newScale);
+        return true;
+    }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
@@ -115,7 +121,7 @@ public class ScrappyFiddleScreen extends Screen {
 
             context.drawTexture(v.getResourceKey(),
                     pos.x, pos.z, // Screen Top Left
-                    (int) (512 / this.blocksPerPixel), (int) (512 / this.blocksPerPixel),  // Paint Size
+                    Math.round(512 / this.blocksPerPixel), Math.round(512 / this.blocksPerPixel),  // Paint Size
                     0, 0, // Texture Top Left
                     NATIVE_IMAGE_SIZE,NATIVE_IMAGE_SIZE, // Texture Read Size
                     NATIVE_IMAGE_SIZE,NATIVE_IMAGE_SIZE // Texture Total Size
