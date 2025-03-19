@@ -15,7 +15,6 @@ import org.blocovermelho.bvmap.MapMod;
 import org.blocovermelho.bvmap.client.MapModClient;
 import org.blocovermelho.bvmap.client.raster.AlbedoRasterizer;
 import org.blocovermelho.bvmap.client.raster.DynamicTile;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 
@@ -89,9 +88,21 @@ public class ScrappyFiddleScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        // Experimentation from playing with google maps:
+        // - Once zoomed, the irl coordinates remains at the same pixel position
+        // - The closer something is to the point being zoomed, the less it moves
+
         double scrolls = Math.pow(SCROLL_PER_TICK, -verticalAmount);
         double newScale = this.blocksPerPixel * scrolls;
         this.blocksPerPixel = (float) NATIVE_IMAGE_SIZE / Math.round(NATIVE_IMAGE_SIZE / newScale);
+
+        ChunkPos a = this.screenToWorld(new ChunkPos((int) Math.round(mouseX), (int) Math.round(mouseY)));
+
+        int dz = (int) Math.round((a.z - this.aw_Origin.z) * (1 - scrolls));
+        int dx = (int) Math.round((a.x - this.aw_Origin.x) * (1 - scrolls));
+
+        this.aw_Origin = new ChunkPos(this.aw_Origin.x + dx, this.aw_Origin.z + dz);
+
         return true;
     }
 
