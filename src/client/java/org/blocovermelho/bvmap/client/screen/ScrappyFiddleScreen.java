@@ -15,6 +15,7 @@ import org.blocovermelho.bvmap.MapMod;
 import org.blocovermelho.bvmap.client.MapModClient;
 import org.blocovermelho.bvmap.client.raster.AlbedoRasterizer;
 import org.blocovermelho.bvmap.client.raster.DynamicTile;
+import org.joml.Vector2i;
 
 import java.util.HashMap;
 
@@ -45,7 +46,7 @@ public class ScrappyFiddleScreen extends Screen {
     private float blocksPerPixel = 1;
 
     /// Absolute Screen-Space Coordinate
-    ChunkPos as_CenterPixel = ChunkPos.ORIGIN;
+    Vector2i as_CenterPixel = new Vector2i(0,0);
 
     /// Absolute World-Space Pixel
     ChunkPos aw_Origin = ChunkPos.ORIGIN;
@@ -58,7 +59,7 @@ public class ScrappyFiddleScreen extends Screen {
 
     @Override
     protected void init() {
-        this.as_CenterPixel = new ChunkPos(width / 2 , height / 2);
+        this.as_CenterPixel = new Vector2i(width / 2 , height / 2);
 
         if (client != null && client.player != null) {
             ChunkPos chunkPos = client.player.getChunkPos();
@@ -96,7 +97,7 @@ public class ScrappyFiddleScreen extends Screen {
         double newScale = this.blocksPerPixel * scrolls;
         this.blocksPerPixel = (float) NATIVE_IMAGE_SIZE / Math.round(NATIVE_IMAGE_SIZE / newScale);
 
-        ChunkPos a = this.screenToWorld(new ChunkPos((int) Math.round(mouseX), (int) Math.round(mouseY)));
+        ChunkPos a = this.screenToWorld(new Vector2i((int) Math.round(mouseX), (int) Math.round(mouseY)));
 
         int dz = (int) Math.round((a.z - this.aw_Origin.z) * (1 - scrolls));
         int dx = (int) Math.round((a.x - this.aw_Origin.x) * (1 - scrolls));
@@ -131,7 +132,7 @@ public class ScrappyFiddleScreen extends Screen {
             var pos = this.worldToScreen(new ChunkPos(k.x * NATIVE_IMAGE_SIZE, k.z * NATIVE_IMAGE_SIZE));
 
             context.drawTexture(v.getResourceKey(),
-                    pos.x, pos.z, // Screen Top Left
+                    pos.x, pos.y, // Screen Top Left
                     Math.round(512 / this.blocksPerPixel), Math.round(512 / this.blocksPerPixel),  // Paint Size
                     0, 0, // Texture Top Left
                     NATIVE_IMAGE_SIZE,NATIVE_IMAGE_SIZE, // Texture Read Size
@@ -153,14 +154,14 @@ public class ScrappyFiddleScreen extends Screen {
      * @param screen The screen space coordinate
      * @return The world space coordinate
      */
-    public ChunkPos screenToWorld(ChunkPos screen) {
+    public ChunkPos screenToWorld(Vector2i screen) {
         // We need to account for the center pixel position being 0,0
         int rs_x = screen.x - this.as_CenterPixel.x;
-        int rs_z = screen.z - this.as_CenterPixel.z;
+        int rs_y = screen.y - this.as_CenterPixel.y;
 
         // Relative Pixel * (Relative Block / Relative Pixel) = Relative Blocks
         int rw_scaledX = (int) (rs_x * this.blocksPerPixel);
-        int rw_scaledZ = (int) (rs_z * this.blocksPerPixel);
+        int rw_scaledZ = (int) (rs_y * this.blocksPerPixel);
 
         // Add the current world origin to get real positions
         int world_x = rw_scaledX + this.aw_Origin.x;
@@ -174,7 +175,7 @@ public class ScrappyFiddleScreen extends Screen {
      * @param world The world space coordinate (<em>Absolute</em> Block Position)
      * @return The screen space coordinate (Pixel Position)
      */
-    public ChunkPos worldToScreen(ChunkPos world) {
+    public Vector2i worldToScreen(ChunkPos world) {
         // Translate based on the current world origin
         int rw_x = world.x - this.aw_Origin.x;
         int rw_z = world.z - this.aw_Origin.z;
@@ -185,9 +186,9 @@ public class ScrappyFiddleScreen extends Screen {
 
         // Moving towards the center of screen
         int screen_x = this.as_CenterPixel.x + rs_scaledx;
-        int screen_z = this.as_CenterPixel.z + rs_scaledz;
+        int screen_y = this.as_CenterPixel.y + rs_scaledz;
 
-        return new ChunkPos(screen_x, screen_z);
+        return new Vector2i(screen_x, screen_y);
     }
 
     @Override
