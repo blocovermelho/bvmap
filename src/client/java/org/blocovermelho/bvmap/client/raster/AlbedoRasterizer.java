@@ -11,13 +11,13 @@ import net.minecraft.util.math.ChunkPos;
 import org.blocovermelho.bvmap.MapMod;
 
 public class AlbedoRasterizer {
-    public static DynamicTile transformRegion(ChunkPos regionPos, WorldSummary worldSummary, int worldHeight) {
+    public static MemoryTile transformRegion(ChunkPos regionPos, WorldSummary worldSummary, int worldHeight) {
         MapMod.LOGGER.info("[AlbedoRasterizer] Transforming Region ({}, {})", regionPos.x, regionPos.z);
         // NOTE: This currently has no caching and just makes the dynamic tiles on the spot
         // Which makes them not quite "dynamic". In a sense so far the mod is "pure" and keeps no state
         // regenerating things once the user presses a key.
         // This *has* to change later, unless I've somehow came up with decent code first try. (Unlikely).
-        DynamicTile tile = new DynamicTile(regionPos);
+        MemoryTile tile = new MemoryTile(regionPos);
         RegionSummary regionSummary =  worldSummary.terrain().getRegion(regionPos);
         MapMod.LOGGER.info("[AlbedoRasterizer] Got summary for ({}, {})? {}", regionPos.x, regionPos.z , regionSummary != null);
 

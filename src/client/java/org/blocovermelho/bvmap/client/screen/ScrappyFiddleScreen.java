@@ -9,15 +9,18 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import org.blocovermelho.bvmap.MapMod;
 import org.blocovermelho.bvmap.client.MapModClient;
 import org.blocovermelho.bvmap.client.raster.AlbedoRasterizer;
 import org.blocovermelho.bvmap.client.raster.DynamicTile;
+import org.blocovermelho.bvmap.client.raster.MemoryTile;
 import org.joml.Vector2i;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This is no place of honor
@@ -31,8 +34,6 @@ import java.util.HashMap;
 @Environment(EnvType.CLIENT)
 public class ScrappyFiddleScreen extends Screen {
     private final Screen parent;
-
-    HashMap<ChunkPos, DynamicTile> tiles = new HashMap<>();
 
     long lastMillis = 0;
     Stopwatch stopwatch = Stopwatch.createUnstarted();
@@ -60,31 +61,6 @@ public class ScrappyFiddleScreen extends Screen {
     @Override
     protected void init() {
         this.as_CenterPixel = new Vector2i(width / 2 , height / 2);
-
-        if (client != null && client.player != null) {
-            ChunkPos chunkPos = client.player.getChunkPos();
-            ChunkPos regionPos = new ChunkPos(RegionSummary.chunkToRegion(chunkPos.x), RegionSummary.chunkToRegion(chunkPos.z));
-            this.aw_Origin = new ChunkPos(client.player.getBlockX(), client.player.getBlockZ());
-
-            // Its 2013 and you're programing java 1.8
-            // There's likely a better way to do this but do I care? nah.
-            if (!MapModClient.EXPLORED_REGIONS.contains(regionPos)) {
-                MapModClient.EXPLORED_REGIONS.add(regionPos);
-            }
-
-            World world = client.player.getWorld();
-            WorldSummary worldSummary = WorldSummary.of(world);
-
-            for (ChunkPos region : MapModClient.EXPLORED_REGIONS) {
-                if (tiles.containsKey(region)) continue;
-                stopwatch.reset();
-                stopwatch.start();
-                var raster =  AlbedoRasterizer.transformRegion(region, worldSummary, world.getHeight());
-                stopwatch.stop();
-                this.lastMillis += stopwatch.elapsed().toMillis();
-                tiles.put(region, raster);
-            }
-        }
     }
 
     @Override
@@ -125,13 +101,18 @@ public class ScrappyFiddleScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
+        var tiles = MapModClient.CACHE.getTilesFor(getTopLeftBlock(), getBottomRightBlock());
 
         RenderSystem.enableBlend();
 
-        tiles.forEach((k, v) -> {
-            var pos = this.worldToScreen(new ChunkPos(k.x * NATIVE_IMAGE_SIZE, k.z * NATIVE_IMAGE_SIZE));
+        tiles.forEach((tile) -> {
+            var textureId = tile.getTextureId().orElse(tile.submit());
 
-            context.drawTexture(v.getResourceKey(),
+            var pos = this.worldToScreen(
+                    new ChunkPos(tile.regionPos.x * NATIVE_IMAGE_SIZE,
+                            tile.regionPos.z * NATIVE_IMAGE_SIZE));
+
+            context.drawTexture(textureId,
                     pos.x, pos.y, // Screen Top Left
                     Math.round(512 / this.blocksPerPixel), Math.round(512 / this.blocksPerPixel),  // Paint Size
                     0, 0, // Texture Top Left
@@ -143,10 +124,6 @@ public class ScrappyFiddleScreen extends Screen {
         });
 
         RenderSystem.disableBlend();
-
-        context.drawText(textRenderer,
-                Text.of("Rasterized " + tiles.size() + " region(s) in AVG: " + lastMillis / tiles.size() + " ms. Total: "  + lastMillis + " ms.")
-                , mouseX + 8 , mouseY, 0xffffffff, true);
     }
 
     /**
@@ -189,6 +166,20 @@ public class ScrappyFiddleScreen extends Screen {
         int screen_y = this.as_CenterPixel.y + rs_scaledz;
 
         return new Vector2i(screen_x, screen_y);
+    }
+
+    public BlockPos getTopLeftBlock() {
+        int dx = Math.round( ((float) width / 2) * this.blocksPerPixel);
+        int dz = Math.round( ((float) height / 2) * this.blocksPerPixel);
+
+        return new BlockPos(this.aw_Origin.x - dx, 0, this.aw_Origin.z - dz);
+    }
+
+    public BlockPos getBottomRightBlock() {
+        int dx = Math.round(((float) width / 2) * this.blocksPerPixel);
+        int dz = Math.round(((float) height / 2) * this.blocksPerPixel);
+
+        return new BlockPos(this.aw_Origin.x + dx, 0 , this.aw_Origin.z + dz);
     }
 
     @Override
